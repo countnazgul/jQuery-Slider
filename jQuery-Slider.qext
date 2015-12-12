@@ -1,0 +1,16 @@
+{
+	"name": "jQuery Slider",
+	"description": "Port of jQuery Slider UI",
+	"icon": "extension",
+	"type": "visualization",
+	"version": "1.0.0",
+	"preview": "preview.png",
+	"author": "stefan.stoichev@gmail.com",
+	"homepage": "https://github.com/countnazgul/jQuery-Slider",
+	"keywords": "qlik-sense, visualization",
+	"license": "MIT",
+	"repository": "https://github.com/countnazgul/jQuery-Slider.git",
+	"dependencies": {
+		"qlik-sense": ">=1.0.x"
+	}
+}
