@@ -1,9 +1,9 @@
-define(["qlik", "jquery", './js/bootstrap.min', "text!./css/style.css", 'text!./css/jquery-ui.css', 'text!./css/scoped-bootstrap.css'], function (qlik, $, bootstrap, cssContent, jqueryUI, bootstrapCss) {
+define(["qlik", "jquery", './js/bootstrap.min', './js/jQuery.slider.custom', "./js/global", "text!./css/style.css", 'text!./css/jquery-ui.css', 'text!./css/scoped-bootstrap.css'], function (qlik, $, bootstrap, slidercustom, global, cssContent, jqueryUI, bootstrapCss) {
 	'use strict';
 	$("<style>").html(cssContent).appendTo("head");
 	$('<style>').html(bootstrapCss).appendTo('head');
 	$('<style>').html(jqueryUI).appendTo('head');
-	
+
 	return {
 		initialProperties: {
 			qListObjectDef: {
@@ -162,7 +162,7 @@ define(["qlik", "jquery", './js/bootstrap.min', "text!./css/style.css", 'text!./
 				return 0;
 			})
 
-			var sliderData = [];
+
 			for (var i = 0; i < data.length; i++) {
 				sliderData.push(data[i][0].qText);
 			}
@@ -191,10 +191,11 @@ define(["qlik", "jquery", './js/bootstrap.min', "text!./css/style.css", 'text!./
 			}
 
 			$element.html(html);
-			$("#slider-range").slider({
+			$("#slider-range").dragslider({
 				range: true,
 				min: 0,
 				max: data.length - 1,
+				rangeDrag: true,
 				//values: sliderVals,
 				stop: function (event, ui) {
 					//$("#sliderMsg").text( '( ' + (ui.values[1] - ui.values[0]) + ' values selected)' );
@@ -203,6 +204,8 @@ define(["qlik", "jquery", './js/bootstrap.min', "text!./css/style.css", 'text!./
 						toSelect.push(i);
 					}
 
+					dragging = false;
+
 					setTimeout(function () {
 						$(ui.handle).attr('title', sliderData[ui.value]).tooltip('fixTitle').tooltip('show');
 					}, 5);
@@ -210,26 +213,31 @@ define(["qlik", "jquery", './js/bootstrap.min', "text!./css/style.css", 'text!./
 					self.backendApi.selectValues(0, toSelect, false);
 				},
 				slide: function (event, ui) {
-					setTimeout(function () {
-						$(ui.handle).attr('title', sliderData[ui.value]).tooltip('fixTitle').tooltip('show');
-					}, 5);
-				},
-				change: function (event, ui) {
-
-					if (consecutive == true) {
+					if (dragging == false) {
 						setTimeout(function () {
+							//console.log('test')
 							$(ui.handle).attr('title', sliderData[ui.value]).tooltip('fixTitle').tooltip('show');
+							//console.log(sliderData[ui.value])
 						}, 5);
 					}
 				},
+				change: function (event, ui) {
+					if (dragging == false) {
+						if (consecutive == true) {
+							setTimeout(function () {
+								$(ui.handle).attr('title', sliderData[ui.value]).tooltip('fixTitle').tooltip('show');
+							}, 5);
+						}
+					}
+				},
 				create: function (event, ui) {
-					create(event, ui, $(this).slider('values', 0), $(this).slider('values', 1))
+					create(event, ui, $(this).dragslider('values', 0), $(this).dragslider('values', 1))
 				}
 
 			});
 
 			if (consecutive == true) {
-				$("#slider-range").slider("values", sliderVals);
+				$("#slider-range").dragslider("values", sliderVals);
 			} else {
 
 				$("#sliderMsg").text('Non consecutive values are selected/possible');
